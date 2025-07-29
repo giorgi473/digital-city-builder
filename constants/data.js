@@ -132,3 +132,38 @@ export const sliderData = [
     },
   },
 ];
+
+export const showSlider = (type) => {
+  const carousel = document.querySelector(".carousel");
+  const list = document.querySelector(".list");
+  const items = document.querySelectorAll(".carousel .list .item");
+  const runningTime = document.querySelector(".carousel .timeRunning");
+
+  if (type === "next") {
+    list.appendChild(items[0]);
+    carousel.classList.add("next");
+  } else {
+    list.prepend(items[items.length - 1]);
+    carousel.classList.add("prev");
+  }
+
+  const timeRunning = 3000;
+  const timeAutoNext = 7000;
+
+  clearTimeout(window.runTimeOut);
+  window.runTimeOut = setTimeout(() => {
+    carousel.classList.remove("next");
+    carousel.classList.remove("prev");
+  }, timeRunning);
+
+  clearTimeout(window.runNextAuto);
+  window.runNextAuto = setTimeout(() => {
+    document.querySelector(".next").click();
+  }, timeAutoNext);
+
+  // Reset time animation
+  runningTime.style.animation = "none";
+  runningTime.offsetHeight;
+  runningTime.style.animation = null;
+  runningTime.style.animation = "runningTime 7s linear 1 forwards";
+};

@@ -3,766 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Animated Image Slider</title>
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "Poppins", sans-serif;
-      }
-      body {
-        height: 2000px;
-      }
-      /* Modern Header */
-      header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 70px;
-        background: rgba(0, 0, 0, 0.9);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 50px;
-        z-index: 1000;
-        transition: all 0.3s ease;
-      }
-      /* Logo */
-      .logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: #fff;
-        font-size: 24px;
-        font-weight: 700;
-        text-decoration: none;
-        transition: color 0.3s ease;
-      }
-      .logo:hover {
-        color: #14ff72cb;
-      }
-      .logo-icon {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, #14ff72cb, #00d4aa);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        font-weight: bold;
-        color: #000;
-      }
-      /* Header Right Section */
-      .header-right {
-        display: flex;
-        align-items: center;
-        gap: 30px;
-      }
-      /* Navigation */
-      nav {
-        display: flex;
-        align-items: center;
-        gap: 30px;
-      }
-      nav a {
-        color: #fff;
-        text-decoration: none;
-        font-size: 16px;
-        font-weight: 500;
-        padding: 8px 16px;
-        border-radius: 25px;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-      }
-      nav a::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(255, 255, 255, 0.1),
-          transparent
-        );
-        transition: left 0.5s;
-      }
-      nav a:hover::before {
-        left: 100%;
-      }
-      nav a.active {
-        background: linear-gradient(135deg, #14ff72cb, #00d4aa);
-        color: #000;
-        font-weight: 600;
-        box-shadow: 0 4px 15px rgba(20, 255, 114, 0.3);
-      }
-      nav a:hover:not(.active) {
-        background: rgba(255, 255, 255, 0.1);
-        transform: translateY(-2px);
-      }
-      /* Auth Buttons */
-      .auth-buttons {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-      }
-      .auth-btn {
-        padding: 8px 20px;
-        border-radius: 25px;
-        font-size: 14px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        border: none;
-        outline: none;
-      }
-      .login-btn {
-        background: transparent;
-        color: #fff;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-      }
-      .login-btn:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: #fff;
-        transform: translateY(-2px);
-      }
-      .register-btn {
-        background: linear-gradient(135deg, #14ff72cb, #00d4aa);
-        color: #000;
-        border: 2px solid transparent;
-        box-shadow: 0 4px 15px rgba(20, 255, 114, 0.3);
-      }
-      .register-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(20, 255, 114, 0.4);
-      }
-      /* Mobile Menu Button */
-      .mobile-menu-btn {
-        display: none;
-        flex-direction: column;
-        cursor: pointer;
-        padding: 5px;
-        gap: 4px;
-      }
-      .mobile-menu-btn span {
-        width: 25px;
-        height: 3px;
-        background: #fff;
-        border-radius: 2px;
-        transition: all 0.3s ease;
-      }
-      .mobile-menu-btn.active span:nth-child(1) {
-        transform: rotate(45deg) translate(6px, 6px);
-      }
-      .mobile-menu-btn.active span:nth-child(2) {
-        opacity: 0;
-      }
-      .mobile-menu-btn.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(6px, -6px);
-      }
-      /* Header scroll effect */
-      header.scrolled {
-        background: rgba(0, 0, 0, 0.95);
-        height: 60px;
-      }
-      /* Modal Styles */
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(5px);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 2000;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-      }
-      .modal-overlay.active {
-        opacity: 1;
-        visibility: visible;
-      }
-      .modal {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        border-radius: 20px;
-        padding: 30px;
-        width: 90%;
-        max-width: 420px;
-        max-height: 85vh; /* დამატებული */
-        overflow-y: auto; /* დამატებული */
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        transform: scale(0.8) translateY(50px);
-        transition: all 0.3s ease;
-        position: relative;
-      }
-      .modal-overlay.active .modal {
-        transform: scale(1) translateY(0);
-      }
-      .modal-header {
-        text-align: center;
-        margin-bottom: 20px; /* შემცირებული 30px-დან */
-      }
-      .modal-title {
-        font-size: 24px; /* შემცირებული 28px-დან */
-        font-weight: 700;
-        color: #333;
-        margin-bottom: 8px; /* შემცირებული 10px-დან */
-      }
-      .modal-subtitle {
-        color: #666;
-        font-size: 14px;
-      }
-      .modal-close {
-        position: absolute;
-        top: 15px;
-        right: 20px;
-        background: none;
-        border: none;
-        font-size: 24px;
-        color: #666;
-        cursor: pointer;
-        transition: color 0.3s ease;
-      }
-      .modal-close:hover {
-        color: #333;
-      }
-      /* Form Styles */
-      .form-group {
-        margin-bottom: 16px; /* შემცირებული 20px-დან */
-      }
-      .form-label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 600;
-        color: #333;
-        font-size: 14px;
-      }
-      .form-input {
-        width: 100%;
-        padding: 12px 16px;
-        border: 2px solid rgba(0, 0, 0, 0.1);
-        border-radius: 12px;
-        font-size: 16px;
-        background: rgba(255, 255, 255, 0.8);
-        transition: all 0.3s ease;
-        outline: none;
-      }
-      .form-input:focus {
-        border-color: #14ff72cb;
-        background: rgba(255, 255, 255, 1);
-        box-shadow: 0 0 0 3px rgba(20, 255, 114, 0.1);
-      }
-      .form-submit {
-        width: 100%;
-        padding: 12px; /* შემცირებული 14px-დან */
-        background: linear-gradient(135deg, #14ff72cb, #00d4aa);
-        color: #000;
-        border: none;
-        border-radius: 12px;
-        font-size: 15px; /* შემცირებული 16px-დან */
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-top: 8px; /* შემცირებული 10px-დან */
-      }
-      .form-submit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(20, 255, 114, 0.3);
-      }
-      .form-footer {
-        text-align: center;
-        margin-top: 16px; /* შემცირებული 20px-დან */
-        color: #666;
-        font-size: 13px; /* შემცირებული 14px-დან */
-      }
-      .form-footer a {
-        color: #14ff72cb;
-        text-decoration: none;
-        font-weight: 600;
-        cursor: pointer;
-      }
-      .form-footer a:hover {
-        text-decoration: underline;
-      }
-      /* carousel */
-      .carousel {
-        width: 100%;
-        height: 100vh;
-        margin-top: 0;
-        overflow: hidden;
-        position: relative;
-      }
-      .carousel .list .item {
-        width: 180px;
-        height: 250px;
-        position: absolute;
-        top: 80%;
-        transform: translateY(-70%);
-        left: 70%;
-        border-radius: 20px;
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-        background-position: 50% 50%;
-        background-size: cover;
-        z-index: 100;
-        transition: 1s;
-      }
-      .carousel .list .item:nth-child(1),
-      .carousel .list .item:nth-child(2) {
-        top: 0;
-        left: 0;
-        transform: translate(0, 0);
-        border-radius: 0;
-        width: 100%;
-        height: 100%;
-      }
-      .carousel .list .item:nth-child(3) {
-        left: 67%;
-      }
-      .carousel .list .item:nth-child(4) {
-        left: calc(67% + 200px);
-      }
-      .carousel .list .item:nth-child(5) {
-        left: calc(67% + 400px);
-      }
-      .carousel .list .item:nth-child(6) {
-        left: calc(67% + 600px);
-      }
-      .carousel .list .item:nth-child(n + 7) {
-        left: calc(67% + 800px);
-        opacity: 0;
-      }
-      .list .item .content {
-        position: absolute;
-        top: 50%;
-        left: 100px;
-        transform: translateY(-50%);
-        width: 400px;
-        text-align: left;
-        color: #fff;
-        display: none;
-      }
-      .list .item:nth-child(2) .content {
-        display: block;
-      }
-      .content .title {
-        font-size: 100px;
-        text-transform: uppercase;
-        color: #14ff72cb;
-        font-weight: bold;
-        line-height: 1;
-        opacity: 0;
-        animation: animate 1s ease-in-out 0.3s 1 forwards;
-      }
-      .content .name {
-        font-size: 100px;
-        text-transform: uppercase;
-        font-weight: bold;
-        line-height: 1;
-        text-shadow: 3px 4px 4px rgba(255, 255, 255, 0.8);
-        opacity: 0;
-        animation: animate 1s ease-in-out 0.6s 1 forwards;
-      }
-      .content .des {
-        margin-top: 10px;
-        margin-bottom: 20px;
-        font-size: 18px;
-        margin-left: 5px;
-        opacity: 0;
-        animation: animate 1s ease-in-out 0.9s 1 forwards;
-      }
-      .content .btn {
-        margin-left: 5px;
-        opacity: 0;
-        animation: animate 1s ease-in-out 1.2s 1 forwards;
-      }
-      .content .btn button {
-        padding: 10px 20px;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
-        border: 2px solid #fff;
-      }
-      .content .btn button:nth-child(1) {
-        margin-right: 15px;
-      }
-      .content .btn button:nth-child(2) {
-        background: transparent;
-        color: #14ff72cb;
-        border: 2px solid #fff;
-        transition: 0.3s;
-      }
-      .content .btn button:nth-child(2):hover {
-        background-color: #14ff72cb;
-        color: #fff;
-        border-color: #14ff72cb;
-      }
-      @keyframes animate {
-        from {
-          opacity: 0;
-          transform: translate(0, 100px);
-          filter: blur(33px);
-        }
-        to {
-          opacity: 1;
-          transform: translate(0);
-          filter: blur(0);
-        }
-      }
-      /* Carousel */
-      /* next prev arrows */
-      .arrows {
-        position: absolute;
-        top: 80%;
-        right: 52%;
-        z-index: 100;
-        width: 300px;
-        max-width: 30%;
-        display: flex;
-        gap: 10px;
-        align-items: center;
-      }
-      .arrows button {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background-color: #14ff72cb;
-        color: #fff;
-        border: none;
-        outline: none;
-        font-size: 16px;
-        font-family: monospace;
-        font-weight: bold;
-        transition: 0.5s;
-        cursor: pointer;
-      }
-      .arrows button:hover {
-        background: #fff;
-        color: #000;
-      }
-      /* time running */
-      .carousel .timeRunning {
-        position: absolute;
-        z-index: 1000;
-        width: 0%;
-        height: 4px;
-        background-color: #14ff72cb;
-        left: 0;
-        top: 0;
-        animation: runningTime 7s linear 1 forwards;
-      }
-      @keyframes runningTime {
-        from {
-          width: 0%;
-        }
-        to {
-          width: 100%;
-        }
-      }
-      /* Responsive Design */
-      @media screen and (max-width: 999px) {
-        header {
-          padding: 0 30px;
-        }
-        .logo {
-          font-size: 20px;
-        }
-        .logo-icon {
-          width: 35px;
-          height: 35px;
-          font-size: 18px;
-        }
-        .header-right {
-          gap: 20px;
-        }
-        nav {
-          gap: 20px;
-        }
-        nav a {
-          font-size: 14px;
-          padding: 6px 12px;
-        }
-        .auth-btn {
-          padding: 6px 16px;
-          font-size: 13px;
-        }
-        .list .item .content {
-          left: 50px;
-        }
-        .content .title,
-        .content .name {
-          font-size: 70px;
-        }
-        .content .des {
-          font-size: 16px;
-        }
-      }
-      @media screen and (max-width: 768px) {
-        header {
-          padding: 0 20px;
-        }
-        .header-right {
-          position: absolute;
-          top: 100%;
-          left: 0;
-          width: 100%;
-          background: rgba(0, 0, 0, 0.95);
-          flex-direction: column;
-          padding: 20px;
-          gap: 20px;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
-          display: none;
-        }
-        .header-right.active {
-          display: flex;
-        }
-        nav {
-          flex-direction: column;
-          gap: 15px;
-          width: 100%;
-        }
-        nav a {
-          width: 100%;
-          text-align: center;
-          padding: 12px;
-        }
-        .auth-buttons {
-          width: 100%;
-          justify-content: center;
-        }
-        .mobile-menu-btn {
-          display: flex;
-        }
-        .modal {
-          padding: 30px 20px;
-          margin: 20px;
-        }
-        .list .item .content {
-          top: 40%;
-        }
-        .content .title,
-        .content .name {
-          font-size: 45px;
-        }
-        .content .btn button {
-          padding: 10px 15px;
-          font-size: 14px;
-        }
-      }
-      /* Validation Styles */
-      .form-input.error {
-        border-color: #ef4444;
-        background: rgba(239, 68, 68, 0.05);
-      }
-
-      .form-input.success {
-        border-color: #10b981;
-        background: rgba(16, 185, 129, 0.05);
-      }
-
-      .error-message {
-        color: #ef4444;
-        font-size: 12px;
-        margin-top: 5px;
-        display: none;
-        animation: slideDown 0.3s ease;
-      }
-
-      .error-message.show {
-        display: block;
-      }
-
-      .success-message {
-        color: #10b981;
-        font-size: 12px;
-        margin-top: 5px;
-        display: none;
-        animation: slideDown 0.3s ease;
-      }
-
-      .success-message.show {
-        display: block;
-      }
-
-      /* Password Strength Indicator */
-      .password-strength {
-        margin-top: 6px; /* შემცირებული 8px-დან */
-        display: none;
-      }
-
-      .password-strength.show {
-        display: block;
-      }
-
-      .strength-bar {
-        height: 3px; /* შემცირებული 4px-დან */
-        background: #e5e7eb;
-        border-radius: 2px;
-        overflow: hidden;
-        margin-bottom: 6px; /* შემცირებული 8px-დან */
-      }
-
-      .strength-fill {
-        height: 100%;
-        transition: all 0.3s ease;
-        border-radius: 2px;
-      }
-
-      .strength-fill.weak {
-        width: 25%;
-        background: #ef4444;
-      }
-
-      .strength-fill.fair {
-        width: 50%;
-        background: #f59e0b;
-      }
-
-      .strength-fill.good {
-        width: 75%;
-        background: #3b82f6;
-      }
-
-      .strength-fill.strong {
-        width: 100%;
-        background: #10b981;
-      }
-
-      .strength-text {
-        font-size: 10px; /* შემცირებული 11px-დან */
-        font-weight: 500;
-        margin-bottom: 4px; /* დამატებული */
-      }
-
-      .strength-text.weak {
-        color: #ef4444;
-      }
-
-      .strength-text.fair {
-        color: #f59e0b;
-      }
-
-      .strength-text.good {
-        color: #3b82f6;
-      }
-
-      .strength-text.strong {
-        color: #10b981;
-      }
-
-      .requirements {
-        margin-top: 8px;
-        font-size: 10px; /* შემცირებული 11px-დან */
-        display: grid;
-        grid-template-columns: 1fr 1fr; /* ორ კოლუმნად */
-        gap: 4px 8px;
-      }
-
-      .requirement {
-        display: flex;
-        align-items: center;
-        gap: 4px; /* შემცირებული 6px-დან */
-        margin-bottom: 2px; /* შემცირებული 4px-დან */
-        color: #6b7280;
-        transition: color 0.3s ease;
-      }
-
-      .requirement-icon {
-        width: 10px; /* შემცირებული 12px-დან */
-        height: 10px; /* შემცირებული 12px-დან */
-        border-radius: 50%;
-        border: 1px solid #d1d5db;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 7px; /* შემცირებული 8px-დან */
-        transition: all 0.3s ease;
-        flex-shrink: 0; /* არ შემცირდეს */
-      }
-
-      .requirement.met .requirement-icon {
-        background: #10b981;
-        border-color: #10b981;
-        color: white;
-      }
-
-      @keyframes slideDown {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      /* Custom Scrollbar for Modal */
-      .modal::-webkit-scrollbar {
-        width: 3px; /* კიდევ უფრო პატარა სიგანე - 6px-დან 3px-მდე */
-      }
-
-      .modal::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.05);
-        border-radius: 2px; /* შესაბამისად შემცირებული */
-      }
-
-      .modal::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #14ff72cb, #00d4aa);
-        border-radius: 2px; /* შესაბამისად შემცირებული */
-        transition: all 0.3s ease;
-      }
-
-      .modal::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(135deg, #00d4aa, #14ff72cb);
-        box-shadow: 0 2px 8px rgba(20, 255, 114, 0.3);
-      }
-
-      /* მწვანე ბურთულების (scroll buttons) გაუქმება */
-      .modal::-webkit-scrollbar-button {
-        display: none;
-      }
-
-      /* Firefox scrollbar */
-      .modal {
-        scrollbar-width: thin;
-        scrollbar-color: #14ff72cb rgba(0, 0, 0, 0.05);
-      }
-    </style>
+    <title>AI Creative Studio</title>
+    <link rel="stylesheet" href="/assets/styles/style.css" />
   </head>
   <body>
     <header id="header">
       <a href="#" class="logo">
-        <div class="logo-icon">S</div>
-        <span>Slider</span>
+        <div class="logo-icon">AI</div>
+        <span>Creative Studio</span>
       </a>
       <div class="header-right" id="headerRight">
         <nav id="nav">
           <a href="#" class="active">Home</a>
+          <a href="#">Tools</a>
+          <a href="#">Gallery</a>
+          <a href="#">Pricing</a>
           <a href="#">About</a>
-          <a href="#">Portfolio</a>
-          <a href="#">Services</a>
-          <a href="#">Contact</a>
         </nav>
         <div class="auth-buttons">
           <button class="auth-btn login-btn" id="loginBtn">Login</button>
           <button class="auth-btn register-btn" id="registerBtn">
-            Register
+            Start Creating
           </button>
         </div>
       </div>
@@ -779,7 +40,7 @@
         <button class="modal-close" id="loginCloseBtn">&times;</button>
         <div class="modal-header">
           <h2 class="modal-title">Welcome Back</h2>
-          <p class="modal-subtitle">Sign in to your account</p>
+          <p class="modal-subtitle">Sign in to your creative account</p>
         </div>
         <form id="loginForm">
           <div class="form-group">
@@ -812,7 +73,7 @@
         </form>
         <div class="form-footer">
           Don't have an account?
-          <a href="#" id="switchToRegister">Sign up</a>
+          <a href="#" id="switchToRegister">Start creating</a>
         </div>
       </div>
     </div>
@@ -822,8 +83,8 @@
       <div class="modal">
         <button class="modal-close" id="registerCloseBtn">&times;</button>
         <div class="modal-header">
-          <h2 class="modal-title">Create Account</h2>
-          <p class="modal-subtitle">Join us today</p>
+          <h2 class="modal-title">Join AI Creative Studio</h2>
+          <p class="modal-subtitle">Start your creative journey today</p>
         </div>
         <form id="registerForm">
           <div class="form-group">
@@ -910,7 +171,7 @@
             ></div>
           </div>
           <button type="submit" class="form-submit" id="registerSubmitBtn">
-            Create Account
+            Start Creating
           </button>
         </form>
         <div class="form-footer">
@@ -932,6 +193,369 @@
       <!-- time running -->
       <div class="timeRunning"></div>
     </div>
+
+    <!-- AI Creative Studio Section -->
+    <section class="ai-studio">
+      <div class="studio-container">
+        <!-- Hero Section -->
+        <div class="studio-hero">
+          <h1 class="studio-title">AI Creative Studio</h1>
+          <p class="studio-subtitle">შექმენი, დააგენერირე, შთაგონდი</p>
+          <p class="studio-description">
+            ხელოვნური ინტელექტის ძალით შექმენი უნიკალური სურათები, ტექსტები,
+            ლოგოები და მრავალი სხვა. ჩვენი AI ინსტრუმენტები დაგეხმარება იდეების
+            რეალიზებაში მხოლოდ რამდენიმე წამში.
+          </p>
+          <button
+            class="cta-button"
+            onclick="document.getElementById('registerBtn').click()"
+          >
+            🚀 დაიწყე შექმნა უფასოდ
+          </button>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features-section">
+          <h2 class="section-title">ჩვენი AI ინსტრუმენტები</h2>
+          <div class="features-grid">
+            <div class="feature-card">
+              <span class="feature-icon">🎨</span>
+              <h3 class="feature-title">AI Image Generator</h3>
+              <p class="feature-description">
+                შექმენი შთამბეჭდავი სურათები მხოლოდ ტექსტური აღწერით.
+                ფოტორეალისტური პორტრეტებიდან აბსტრაქტულ ხელოვნებამდე.
+              </p>
+              <button class="feature-button">სცადე ახლავე</button>
+            </div>
+
+            <div class="feature-card">
+              <span class="feature-icon">✍️</span>
+              <h3 class="feature-title">Smart Text Writer</h3>
+              <p class="feature-description">
+                დააგენერირე ბლოგ პოსტები, სტატიები, სოციალური მედიის კონტენტი და
+                მარკეტინგული ტექსტები AI-ის დახმარებით.
+              </p>
+              <button class="feature-button">დაიწყე წერა</button>
+            </div>
+
+            <div class="feature-card">
+              <span class="feature-icon">🎭</span>
+              <h3 class="feature-title">Logo Designer</h3>
+              <p class="feature-description">
+                შექმენი პროფესიონალური ლოგოები და ბრენდინგი. AI გაანალიზებს შენს
+                ბიზნესს და შექმნის იდეალურ დიზაინს.
+              </p>
+              <button class="feature-button">დიზაინის შექმნა</button>
+            </div>
+
+            <div class="feature-card">
+              <span class="feature-icon">🎵</span>
+              <h3 class="feature-title">Music Composer</h3>
+              <p class="feature-description">
+                კომპოზიცია უნიკალური მუსიკალური ნაწარმოებებისა სხვადასხვა ჟანრში
+                - კლასიკურიდან ელექტრონულამდე.
+              </p>
+              <button class="feature-button">მუსიკის შექმნა</button>
+            </div>
+
+            <div class="feature-card">
+              <span class="feature-icon">🎬</span>
+              <h3 class="feature-title">Video Creator</h3>
+              <p class="feature-description">
+                შექმენი ანიმაციური ვიდეოები, პრეზენტაციები და სოციალური მედიის
+                კონტენტი AI-ის დახმარებით.
+              </p>
+              <button class="feature-button">ვიდეოს შექმნა</button>
+            </div>
+
+            <div class="feature-card">
+              <span class="feature-icon">🧠</span>
+              <h3 class="feature-title">Creative Assistant</h3>
+              <p class="feature-description">
+                AI ასისტენტი რომელიც დაგეხმარება იდეების გენერირებაში,
+                პროექტების დაგეგმვასა და კრეატიულ გადაწყვეტილებებში.
+              </p>
+              <button class="feature-button">ასისტენტთან ლაპარაკი</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Tools Showcase -->
+        <div class="tools-showcase">
+          <h2 class="section-title">ყველა AI ინსტრუმენტი</h2>
+          <div class="tools-grid">
+            <div class="tool-card">
+              <span class="tool-icon">🖼️</span>
+              <h4 class="tool-name">Art Generator</h4>
+              <p class="tool-description">შექმენი ხელოვნების ნიმუშები</p>
+              <span class="tool-status status-available">ხელმისაწვდომი</span>
+            </div>
+
+            <div class="tool-card">
+              <span class="tool-icon">📝</span>
+              <h4 class="tool-name">Blog Writer</h4>
+              <p class="tool-description">ბლოგ პოსტების გენერირება</p>
+              <span class="tool-status status-available">ხელმისაწვდომი</span>
+            </div>
+
+            <div class="tool-card">
+              <span class="tool-icon">🏷️</span>
+              <h4 class="tool-name">Brand Kit</h4>
+              <p class="tool-description">სრული ბრენდინგ პაკეტი</p>
+              <span class="tool-status status-available">ხელმისაწვდომი</span>
+            </div>
+
+            <div class="tool-card">
+              <span class="tool-icon">🎤</span>
+              <h4 class="tool-name">Voice Clone</h4>
+              <p class="tool-description">ხმის კლონირება</p>
+              <span class="tool-status status-coming-soon">მალე</span>
+            </div>
+
+            <div class="tool-card">
+              <span class="tool-icon">🌐</span>
+              <h4 class="tool-name">Web Designer</h4>
+              <p class="tool-description">ვებსაიტის დიზაინი</p>
+              <span class="tool-status status-coming-soon">მალე</span>
+            </div>
+
+            <div class="tool-card">
+              <span class="tool-icon">📊</span>
+              <h4 class="tool-name">Data Visualizer</h4>
+              <p class="tool-description">მონაცემების ვიზუალიზაცია</p>
+              <span class="tool-status status-coming-soon">მალე</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-section">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-number">50K+</span>
+              <span class="stat-label">შექმნილი სურათი</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">25K+</span>
+              <span class="stat-label">აქტიური მომხმარებელი</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">100+</span>
+              <span class="stat-label">AI მოდელი</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">99.9%</span>
+              <span class="stat-label">სისტემის მუშაობა</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonials -->
+        <div class="testimonials-section">
+          <h2 class="section-title">რას ამბობენ ჩვენი მომხმარებლები</h2>
+          <div class="testimonials-grid">
+            <div class="testimonial-card">
+              <p class="testimonial-text">
+                "AI Creative Studio-მ სრულიად შეცვალა ჩემი სამუშაო პროცესი. ახლა
+                რამდენიმე წამში ვქმნი იმას, რაც ადრე საათებს მჭირდებოდა."
+              </p>
+              <div class="testimonial-author">
+                <div class="author-avatar">ნ</div>
+                <div class="author-info">
+                  <h4>ნინო გელაშვილი</h4>
+                  <p>გრაფიკული დიზაინერი</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-card">
+              <p class="testimonial-text">
+                "შთამბეჭდავია თუ როგორ ესმის AI-ს ჩემი იდეები და ქმნის ზუსტად
+                იმას, რაც მინდა. ეს არის მომავლის ტექნოლოგია!"
+              </p>
+              <div class="testimonial-author">
+                <div class="author-avatar">დ</div>
+                <div class="author-info">
+                  <h4>დავით ხარაიშვილი</h4>
+                  <p>მარკეტინგ მენეჯერი</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-card">
+              <p class="testimonial-text">
+                "როგორც სტარტაპის დამფუძნებელი, AI Creative Studio დამეხმარა
+                ბრენდინგში და მარკეტინგ მასალების შექმნაში."
+              </p>
+              <div class="testimonial-author">
+                <div class="author-avatar">ა</div>
+                <div class="author-info">
+                  <h4>ანა მამაცაშვილი</h4>
+                  <p>სტარტაპ დამფუძნებელი</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Final CTA -->
+        <div class="final-cta">
+          <h2>მზად ხარ შექმნისთვის?</h2>
+          <p>
+            შეუერთდი ათასობით კრეატიულ ადამიანს რომლებიც AI Creative Studio-ს
+            იყენებენ თავიანთი იდეების რეალიზებისთვის.
+          </p>
+          <div class="cta-buttons">
+            <button
+              class="cta-primary"
+              onclick="document.getElementById('registerBtn').click()"
+            >
+              🚀 დაიწყე უფასოდ
+            </button>
+            <button class="cta-secondary">📞 დაგვიკავშირდი</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Demo Section -->
+    <section class="live-demo-section">
+      <div class="demo-container">
+        <h2 class="demo-title">Live AI Demo</h2>
+        <div class="demo-workspace">
+          <div class="demo-input">
+            <textarea
+              id="aiPrompt"
+              placeholder="აღწერე რა გინდა რომ შექმნას AI-მ... მაგ: 'შექმენი ლამაზი ლანდშაფტის სურათი მთებით და ტბით'"
+            ></textarea>
+            <div class="demo-controls">
+              <select id="aiModel">
+                <option value="image">🎨 Image Generator</option>
+                <option value="text">✍️ Text Writer</option>
+                <option value="logo">🎭 Logo Designer</option>
+                <option value="music">🎵 Music Composer</option>
+              </select>
+              <button class="generate-btn" id="generateBtn">Generate</button>
+            </div>
+          </div>
+          <div class="demo-output">
+            <div class="output-placeholder">
+              <p>🎨 AI-ის შედეგი აქ გამოჩნდება...</p>
+              <p style="font-size: 14px; margin-top: 10px">
+                შეიყვანე prompt და დააჭირე Generate-ს
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Playground -->
+    <section class="playground-section">
+      <div class="playground-container">
+        <h2 class="playground-title">Interactive Playground</h2>
+        <div class="playground-tabs">
+          <button class="tab-btn active" data-tab="canvas">🎨 Canvas</button>
+          <button class="tab-btn" data-tab="code">💻 Code</button>
+          <button class="tab-btn" data-tab="3d">🎯 3D Studio</button>
+        </div>
+        <div class="playground-content">
+          <div class="tab-content active" id="canvas-tab">
+            <canvas id="creativeCanvas"></canvas>
+            <div class="canvas-tools">
+              <button class="tool-btn active" data-tool="brush">🖌️</button>
+              <button class="tool-btn" data-tool="shapes">🔷</button>
+              <button class="tool-btn" data-tool="text">📝</button>
+              <button class="tool-btn" data-tool="ai">🤖</button>
+            </div>
+          </div>
+          <div class="tab-content" id="code-tab">
+            <div
+              style="
+                background: #1a1a1a;
+                border-radius: 12px;
+                padding: 20px;
+                color: #fff;
+              "
+            >
+              <h3>Code Playground</h3>
+              <p>Interactive code editor coming soon...</p>
+            </div>
+          </div>
+          <div class="tab-content" id="3d-tab">
+            <div
+              style="
+                background: #2a2a2a;
+                border-radius: 12px;
+                padding: 20px;
+                color: #fff;
+                text-align: center;
+              "
+            >
+              <h3>3D Studio</h3>
+              <p>3D modeling environment coming soon...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Advanced Features -->
+    <section class="advanced-features">
+      <div class="studio-container">
+        <h2 class="section-title">Advanced Features</h2>
+        <div class="advanced-grid">
+          <div class="feature-card interactive" data-feature="voice">
+            <span class="feature-icon">🎤</span>
+            <h3 class="feature-title">Voice Commands</h3>
+            <p class="feature-description">
+              კონტროლი AI-ის ხმოვანი ბრძანებებით. ქართული ენის მხარდაჭერა.
+            </p>
+            <div class="feature-demo">
+              <button class="voice-btn">Start Listening</button>
+              <div class="voice-visualizer"></div>
+            </div>
+          </div>
+
+          <div class="feature-card interactive" data-feature="collaboration">
+            <span class="feature-icon">👥</span>
+            <h3 class="feature-title">Real-time Collaboration</h3>
+            <p class="feature-description">
+              იმუშავე გუნდთან ერთად რეალურ დროში. ნახე ცვლილებები live-ში.
+            </p>
+            <div class="feature-demo">
+              <div class="user-avatars">
+                <div class="avatar">👤</div>
+                <div class="avatar">👩</div>
+                <div class="avatar">👨</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-card interactive" data-feature="ar">
+            <span class="feature-icon">🥽</span>
+            <h3 class="feature-title">AR Preview</h3>
+            <p class="feature-description">
+              ნახე შენი შექმნილი კონტენტი AR-ში. ვირტუალური გარემო.
+            </p>
+            <div class="feature-demo">
+              <button class="ar-btn">Launch AR</button>
+            </div>
+          </div>
+
+          <div class="feature-card interactive" data-feature="blockchain">
+            <span class="feature-icon">⛓️</span>
+            <h3 class="feature-title">NFT Creation</h3>
+            <p class="feature-description">
+              შექმენი და გაყიდე NFT-ები blockchain-ზე. კრიპტო ინტეგრაცია.
+            </p>
+            <div class="feature-demo">
+              <button class="nft-btn">Create NFT</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <script type="module" src="app.js"></script>
   </body>
